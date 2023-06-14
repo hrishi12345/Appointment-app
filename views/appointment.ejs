@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+    <div>
+        <h1>Book Appointment</h1>
+        
+        <form id="appointment-form" method="POST">
+            <label for="username">Username:</label>
+            <input id="username" type="text" name="username">
+            <label for="phoneNumber">Phone Number:</label>
+            <input id="phoneNumber" type="number" name="phoneNumber">
+            <label for="email">Email:</label>
+            <input id="email" type="email" name="email">
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </form>
+    </div>
+    <ul id="appointment-list" class="container">
+        <% appointments.forEach(function(appointment) { %>
+        <li>
+            <span><%= appointment.username %></span>
+            <span><%= appointment.email %></span>
+            <button class="edit">Edit</button>
+            <button class="delete">Delete</button>
+        </li>
+        <% }); %>
+    </ul>
+    <script src="../models/product.js"></script>
+    <script>
+        const form = document.getElementById('appointment-form');
+        const container = document.getElementById('appointment-list');
+       
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = form.elements.username.value;
+            const phoneNumber = form.elements.phoneNumber.value;
+            const email = form.elements.email.value;
+        
+            const data = {
+                username: username,
+                phoneNumber: phoneNumber,
+                email: email
+            };
+        
+            if (username && email) {
+                // Save the appointment to the database
+                fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(() => {
+                        // Display the newly saved appointment
+                        displayAppointment(data);
+                    })
+                    .catch((error) => {
+                        console.log('Error:', error);
+                    });
+            }
+        
+            form.reset();
+        });
+        
+        function displayAppointment(appointment) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${appointment.username}</span>
+                <span>${appointment.email}</span>
+                <button class="edit">Edit</button>
+                <button class="delete">Delete</button>
+            `;
+            container.appendChild(li);
+        
+            const editButton = li.querySelector('.edit');
+            const deleteButton = li.querySelector('.delete');
+        
+            editButton.addEventListener('click', () => {
+                // Perform edit functionality here
+                console.log('Edit button clicked for', appointment);
+            });
+        
+            deleteButton.addEventListener('click', () => {
+                // Perform delete functionality here
+                console.log('Delete button clicked for', appointment);
+                li.remove(); // Remove the list item from the container
+            });
+        }
+    </script>
+</body>
+</html>
